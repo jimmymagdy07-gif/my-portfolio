@@ -1,0 +1,339 @@
+/* --- 1. SETUP & ROOT VARIABLES --- */
+:root {
+    --bg-color: #000000;
+    --primary-neon: #A020F0;  /* Neon Purple */
+    --secondary-neon: #00FFFF; /* Neon Cyan */
+    --text-color: #f0f0f0;
+    --font-heading: 'Space Mono', monospace;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    /* Enables smooth scrolling for anchor links (e.g., #work) */
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+/* --- 2. GLOBAL STYLES & ANIMATIONS --- */
+
+/* Reusable Neon Glow for Headings */
+.neon-text-primary {
+    font-family: var(--font-heading);
+    color: #fff;
+    /* This complex shadow creates the vibrant "glow" effect */
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 15px var(--primary-neon),
+        0 0 20px var(--primary-neon),
+        0 0 25px var(--primary-neon),
+        0 0 30px var(--primary-neon);
+}
+
+.neon-text-secondary {
+    font-family: var(--font-heading);
+    color: var(--secondary-neon);
+    text-shadow:
+        0 0 5px var(--secondary-neon),
+        0 0 10px var(--secondary-neon);
+}
+
+/* Reusable Neon Glow for Elements (Borders/Buttons) */
+.neon-border {
+    border: 2px solid var(--primary-neon);
+    box-shadow: 
+        0 0 5px var(--primary-neon),
+        0 0 10px var(--primary-neon),
+        inset 0 0 5px var(--primary-neon); /* Inner glow */
+    transition: box-shadow 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.neon-border:hover {
+    transform: scale(1.02);
+    box-shadow: 
+        0 0 10px var(--primary-neon),
+        0 0 20px var(--primary-neon),
+        0 0 30px var(--primary-neon),
+        inset 0 0 10px var(--primary-neon);
+}
+
+/* Breathing/Pulsing Animation */
+@keyframes pulse {
+    0% {
+        box-shadow: 
+            0 0 5px var(--primary-neon),
+            0 0 10px var(--primary-neon);
+    }
+    50% {
+        box-shadow: 
+            0 0 10px var(--primary-neon),
+            0 0 20px var(--primary-neon),
+            0 0 30px var(--primary-neon);
+    }
+    100% {
+        box-shadow: 
+            0 0 5px var(--primary-neon),
+            0 0 10px var(--primary-neon);
+    }
+}
+
+.pulse-animation {
+    animation: pulse 2.5s infinite ease-in-out;
+}
+
+/* States for Intersection Observer (Fade-in on scroll) */
+.hidden {
+    opacity: 0;
+    transform: translateY(50px);
+    transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+/* --- 3. SECTION 1: HERO --- */
+.hero-section {
+    height: 100vh; /* Full viewport height */
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 2rem;
+    
+    /* CRITICAL: Background Image with specified overlay */
+  background-image: 
+    linear-gradient(to top, 
+        rgba(0,0,0,1) 10%, 
+        rgba(160,32,240,0.2) 50%, 
+        rgba(0,0,0,0.8) 100%
+    ),
+    url('./images/profile.jpg');
+
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed; /* Creates a subtle parallax effect */
+}
+
+.hero-content h1 {
+    font-size: 3.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.hero-content h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.hero-content p {
+    font-size: 1.1rem;
+    max-width: 650px; /* Constrains bio width for readability */
+    margin: 0 auto 2rem auto;
+}
+
+.cta-button {
+    display: inline-block;
+    padding: 12px 28px;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: var(--primary-neon);
+    background: transparent;
+    border: 2px solid var(--primary-neon);
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.cta-button:hover {
+    background-color: var(--primary-neon);
+    color: #fff;
+    /* Pauses pulse and brightens shadow on hover */
+    animation: none; 
+    box-shadow: 
+        0 0 10px var(--primary-neon),
+        0 0 20px var(--primary-neon),
+        0 0 30px var(--primary-neon);
+}
+
+
+/* --- 4. SECTION 2: STICKY NAVIGATION --- */
+.sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--bg-color);
+    padding: 1rem 0;
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(160, 32, 240, 0.3);
+    
+    /* Initially hidden: will be moved into view by JavaScript */
+    transform: translateY(-100%);
+    transition: transform 0.4s ease-in-out;
+}
+
+/* This class is added by JavaScript on scroll */
+.nav-visible {
+    transform: translateY(0);
+}
+
+.sticky-nav a {
+    color: var(--primary-neon);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    transition: color 0.3s ease, text-shadow 0.3s ease;
+}
+
+.sticky-nav a:hover {
+    color: #fff;
+    text-shadow: 0 0 5px var(--secondary-neon);
+}
+
+
+/* --- 5. MAIN CONTENT & SECTIONS (Work, Contact) --- */
+main {
+    /* Provides main container padding */
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.content-section {
+    /* Spacing between sections */
+    padding: 6rem 0;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+/* --- 6. SECTION 3: PORTFOLIO GRID --- */
+.portfolio-grid {
+    display: grid;
+    /* Responsive 2-column grid */
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2.5rem;
+}
+
+.portfolio-card {
+    background-color: #080808; /* Slightly off-black */
+    border-radius: 8px;
+    overflow: hidden; /* Ensures border-radius clips the iframe */
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+.portfolio-card h3 {
+    font-family: var(--font-heading);
+    color: var(--secondary-neon);
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive Vimeo Embed Wrapper */
+.video-wrapper {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+/* --- 7. SECTION 4: CONTACT --- */
+.contact-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center-align contact links */
+    gap: 1.5rem;
+}
+
+.contact-info a {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: var(--primary-neon);
+    transform: scale(1.05);
+}
+
+.contact-info i.neon-icon {
+    color: var(--primary-neon);
+    margin-right: 1rem;
+    width: 25px; /* Aligns text */
+    text-shadow: 0 0 8px var(--primary-neon);
+}
+
+/* --- 8. FOOTER --- */
+footer {
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.9rem;
+    color: #555;
+    border-top: 1px solid #222;
+    margin-top: 4rem;
+}
+
+/* --- 9. RESPONSIVE MEDIA QUERIES --- */
+@media (max-width: 768px) {
+    .hero-content h1 {
+        font-size: 2.5rem;
+    }
+    .hero-content h2 {
+        font-size: 1.25rem;
+    }
+    
+    /* Make portfolio grid 1-column */
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .content-section {
+        padding: 4rem 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .portfolio-grid {
+        /* On very small screens, let grid items be smaller */
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+
+    .sticky-nav {
+        gap: 1.5rem;
+    }
+}
